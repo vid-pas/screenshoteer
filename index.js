@@ -44,22 +44,19 @@ console.log(fullPage);
     await page.goto(urlvalue)
     const title = await page.title()
     const t = title.replace(/[/\\?%*:|"<>]/g, '-')
+    const args = process.argv.replace(/[/\\?%*:|"<>]/g, '-')
     if (program.waitfor) await page.waitFor(Number(program.waitfor))
     if (program.el) {
       const el = await page.$(program.el);
       await el.screenshot({
-        path: `${t} ${program.emulate} ${program.el} ${d.getTime()}.png`
+        path: `${t} ${args} ${program.el} ${d.getTime()}.png`
       });
     } else {
-      await page.screenshot({path: t + " " +  program.emulate  + " " + d.getTime() + '.png', fullPage: fullPage})
+      await page.screenshot({path: t + " " +  args  + " " + d.getTime() + '.png', fullPage: fullPage})
     }
     await page.emulateMedia('screen')
-    if (program.pdf) await page.pdf({ path: t + " " +  program.emulate  + " " + d.getTime()  + '.pdf' })
+    if (program.pdf) await page.pdf({ path: t + " " +  args  + " " + d.getTime()  + '.pdf' })
     console.log(t)
     await browser.close()
   }
-
 })()
-
-
-
