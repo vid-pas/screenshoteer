@@ -38,13 +38,13 @@ console.log(fullPage);
     const browser = await puppeteer.launch()
     const page = await browser.newPage()
     const d = new Date()
-    const height = !program.h?0:program.h
+    const height = !program.h?'0':program.h
     if (program.w && height) await page.setViewport({width: Number(program.w), height: Number(height)})
     if (program.emulate) await page.emulate(devices[program.emulate]);
     await page.goto(urlvalue)
     const title = await page.title()
     const t = title.replace(/[/\\?%*:|"<> ]/g, '-')
-    const arglist = new Array()
+    var arglist = new Array()
     //set arglist
     if (urlvalue) arglist.push(urlvalue.replace(/:\/\//g, '-'))
     if (program.emulate) arglist.push(program.emulate)
