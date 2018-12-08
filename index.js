@@ -38,8 +38,12 @@ console.log(fullPage);
     const browser = await puppeteer.launch()
     const page = await browser.newPage()
     const d = new Date()
-    const height = !program.h?'0':program.h
-    if (program.w && height) await page.setViewport({width: Number(program.w), height: Number(height)})
+    if (program.w || program.h) {
+      const newWidth = !program.w?600:program.w
+      const newHeight = !program.h?'0':program.h
+      if (program.h && !program.fullpage) fullPage = false;
+      await page.setViewport({width: Number(newWidth), height: Number(newHeight)})
+    }
     if (program.emulate) await page.emulate(devices[program.emulate]);
     await page.goto(urlvalue)
     const title = await page.title()
