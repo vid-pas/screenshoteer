@@ -8,6 +8,7 @@ var urlvalue, emulate = "";
 
 program
     .option('--url, [url]', 'The url')
+    .option('--timestamp, [timestamp]', 'Bool(true) - Timestamp in name')
     .option('--emulate, [emulate]', 'emulate device')
     .option('--fullpage, [fullpage]', 'Full Page')
     .option('--pdf, [pdf]', 'Generate PDF')
@@ -21,9 +22,10 @@ if (program.url) urlvalue = program.url
 else process.exit(console.log("Please add --url parameter. Something like this: $ screenshoteer --url http:www.example.com"));
 
 !program.fullpage ? fullPage = true : fullPage = JSON.parse(program.fullpage); 
+!program.timestamp ? timestamp = true : timestamp = JSON.parse(program.timestamp); 
 
 console.log(urlvalue);
-console.log(fullPage);
+console.log('fullPage: ' + fullPage);
 
 (async () => {
 
@@ -47,7 +49,7 @@ console.log(fullPage);
     if (program.emulate) await page.emulate(devices[program.emulate]);
     await page.goto(urlvalue)
     const title = await page.title()
-    const t = title.replace(/[/\\?%*:|"<> ]/g, '-')
+    const t = title.replace(/[\!]/g, '').replace(/[/\\?%*:|"<> ]/g, '-').replace('---', '-')
     var arglist = new Array()
     //set arglist
     if (urlvalue) arglist.push(urlvalue.replace(/:\/\//g, '-'))
@@ -59,7 +61,12 @@ console.log(fullPage);
     if (program.fullpage) arglist.push('fullpage')
     const args = arglist.join('-').replace(/[/\\?%*:|"<> ]/g, '-')
     if (program.waitfor) await page.waitFor(Number(program.waitfor))
-    var filename = t + "_" +  args  + "_" + d.getTime() + '.png'
+    //var filename = t + "_" +  args  + "_" + d.getTime() + '.png'
+    if(!timestamp){
+      var filename = args  + '.png' //pulling page title image name.
+    } else {
+      var filename = args  + "_" + d.getTime() + '.png' //pulling page title image name.
+    }
     if (program.el) {
       const el = await page.$(program.el);
       await el.screenshot({path: `${filename}`});
